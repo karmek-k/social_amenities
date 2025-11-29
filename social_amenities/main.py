@@ -17,9 +17,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import locale
+import sys
 
 from social_amenities.location import get_user_location
-from social_amenities.overpass_api import overpass_query
+from social_amenities.overpass_api import overpass_query, extract_api_data, Amenity
 
 
 def main() -> None:
@@ -27,7 +28,7 @@ def main() -> None:
 
     locale.setlocale(locale.LC_ALL, 'Polish_Poland')
 
-    print('~~Wyszukiwarka ośrodków społecznych~~')
+    print('~~Wyszukiwarka ośrodków społecznych~~\n')
     print('Odnajdywanie Twojej lokalizacji...')
 
     lat, lon = get_user_location()
@@ -37,11 +38,12 @@ def main() -> None:
     radius = 0.0
     while radius <= 0.0:
         try:
-            radius = float(input('Promień: '))
+            radius = float(input('Promień [km]: '))
         except ValueError:
             print('Podano nieprawidłową wartość.')
 
-    query_result = overpass_query(f"""
+    print('Wyszukiwanie punktów.')
+    data = overpass_query(f"""
 [out:json]
 ;
 node
@@ -50,4 +52,32 @@ node
 out;
 """)
 
-    print(query_result)
+    amenities = extract_api_data(data)
+    if not amenities:
+        print(f'Nie znaleziono żadnych punktów w promieniu {radius} km.\nSpróbuj podać inną wartość.')
+        sys.exit(1)
+
+    print(f'Znaleziono {len(amenities)} punktów.')
+    print('Dane pochodzą z www.openstreetmap.org')
+
+    for amenity in amenities:
+        print_amenity(amenity)
+
+
+def print_amenity(amenity: Amenity) -> None:
+    print('-' * 20)
+    print(amenity.name)
+    print('-' * 20)
+
+    if amenity.email:
+        print('E-mail:', amenity.email)
+
+    if amenity.phone:
+        print('Telefon', amenity.phone)
+
+    if amenity.website:
+        print('Strona internetowa:', amenity.website)
+    
+    print('Mapa:', amenity.map_url())
+    
+    print()

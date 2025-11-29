@@ -20,4 +20,7 @@ from social_amenities.main import main
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('\nPrzerwano działanie programu.')
