@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import unittest
 
-from social_amenities.overpass_api import overpass_query
+from social_amenities.overpass_api import overpass_query, extract_api_data
 
 
 class TestOverpassApi(unittest.TestCase):
@@ -33,3 +33,14 @@ out geom;
 """)
         self.assertIn('version', result.keys())
         self.assertIn('elements', result.keys())
+    
+    def test_extract_api_data(self) -> None:
+        results = extract_api_data({'version': 0.6, 'generator': 'Overpass API 0.7.62.8 e802775f', 'osm3s': {'timestamp_osm_base': '2025-11-29T18:22:30Z', 'copyright': 'The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.'}, 'elements': [{'type': 'node', 'id': 5173189711, 'lat': 
+52.5130596, 'lon': 21.0717741, 'tags': {'amenity': 'social_facility', 'email': 'xxx', 'level': '1', 'name': 'Ośrodek Pomocy Społecznej w Serocku', 'phone': 'yyy', 'social_facility': 'outreach', 'website': 'https://www.ops.serock.pl/'}}, {'type': 'node', 'id': 12176610285, 'lat': 52.5087274, 'lon': 21.0697434, 'tags': {'amenity': 'social_facility', 'name': 'Dom Wczasów Dziecięcych w Serocku', 'social_facility': 'nursing_home'}}]})
+
+        first = results[0]
+
+        self.assertEqual('Ośrodek Pomocy Społecznej w Serocku', first.name)
+        self.assertEqual('xxx', first.email)
+        self.assertEqual('yyy', first.phone)
+        self.assertEqual('https://www.ops.serock.pl/', first.website)

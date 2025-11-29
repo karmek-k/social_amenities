@@ -16,10 +16,27 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from dataclasses import dataclass
+
 import requests
 
 
 ENDPOINT_URL = 'https://overpass-api.de/api/interpreter'
+
+@dataclass
+class Amenity:
+    coords: tuple[float, float]
+    name: str
+    email: str | None
+    phone: str | None
+    website: str | None
+
+    def map_url(self) -> str:
+        """Returns a URL with a map centered on this location"""
+        lat, lon = self.coords
+
+        return f'https://www.openstreetmap.org/#map=16/{lat}/{lon}'
+
 
 def overpass_query(query: str) -> dict:
     """Makes a query to the Overpass API. Returns the resulting JSON parsed to a dictionary.
@@ -31,3 +48,23 @@ def overpass_query(query: str) -> dict:
         raise ConnectionError(f'Error while querying: non-200 HTTP status code\n{response.text()}')
 
     return response.json()
+
+
+def extract_api_data(data: dict) -> list[Amenity]:
+    """Extracts data from `overpass_query`."""
+
+    result = []
+    elements = data['elements']
+
+    for el in elements:
+        tags = el['tags']
+
+        result.append(Amenity(
+            coords=(el['lat'], el['lon']),
+            name=tags.get('name', 'bez nazwy'),
+            email=tags.get('email'),
+            phone=tags.get('phone'),
+            website=tags.get('website'),
+        ))
+
+    return result
