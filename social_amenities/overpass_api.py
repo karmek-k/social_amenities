@@ -35,7 +35,7 @@ class Amenity:
         """Returns a URL with a map centered on this location"""
         lat, lon = self.coords
 
-        return f'https://www.openstreetmap.org/#map=16/{lat}/{lon}'
+        return f'https://www.openstreetmap.org/?mlat={lat}&mlon={lon}&zoom=16'
 
 
 def overpass_query(query: str) -> dict:
