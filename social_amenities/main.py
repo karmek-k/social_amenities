@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import locale
 import sys
 
-from social_amenities.location import get_user_location
+from social_amenities.location import get_user_location, distance
 from social_amenities.overpass_api import overpass_query, extract_api_data, Amenity
 
 
@@ -57,23 +57,23 @@ out;
         print(f'Nie znaleziono żadnych punktów w promieniu {radius} km.\nSpróbuj podać inną wartość.')
         sys.exit(1)
 
-    print(f'Znaleziono {len(amenities)} punktów.')
+    print(f'Znaleziono {len(amenities)} punktów (odległości są orientacyjne).')
     print('Dane pochodzą z www.openstreetmap.org')
 
     for amenity in amenities:
-        print_amenity(amenity)
+        print_amenity((lat, lon), amenity)
 
 
-def print_amenity(amenity: Amenity) -> None:
+def print_amenity(location: tuple[float, float], amenity: Amenity) -> None:
     print('-' * 20)
-    print(amenity.name)
+    print(amenity.name, f'({distance(location, amenity.coords):.2f} km stąd)')
     print('-' * 20)
 
     if amenity.email:
         print('E-mail:', amenity.email)
 
     if amenity.phone:
-        print('Telefon', amenity.phone)
+        print('Telefon:', amenity.phone)
 
     if amenity.website:
         print('Strona internetowa:', amenity.website)

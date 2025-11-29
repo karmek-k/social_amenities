@@ -17,6 +17,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import requests
+from geopy.distance import geodesic
+
 
 def get_user_location() -> tuple[float, float]:
     """Returns user's location as latitude and longitude."""
@@ -29,3 +31,9 @@ def get_user_location() -> tuple[float, float]:
     [lat, lon] = response.text.split(',')
 
     return (float(lat), float(lon))
+
+
+def distance(first: tuple[float, float], second: tuple[float, float]) -> float:
+    """Calculates the distance between two points in kilometers."""
+
+    return geodesic(first, second).kilometers
