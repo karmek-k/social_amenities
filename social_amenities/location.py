@@ -21,14 +21,11 @@ import requests
 def get_user_location() -> tuple[float, float]:
     """Returns user's location as latitude and longitude."""
 
-    try:
-        request = requests.get('https://ipinfo.io/loc')
-    except requests.exceptions.RequestException:
-        raise ConnectionError('Geolocation service unavailable')
+    response = requests.get('https://ipinfo.io/loc')
 
-    if request.status_code != 200:
+    if response.status_code != 200:
         raise ConnectionError('Error while geolocating: non-200 HTTP status code')
 
-    [lat, lon] = request.text.split(',')
+    [lat, lon] = response.text.split(',')
 
     return (float(lat), float(lon))
