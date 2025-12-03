@@ -16,26 +16,4 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import requests
-from geopy.distance import geodesic
-
-from social_amenities.types import Position
-
-
-def get_user_location() -> Position:
-    """Returns user's location as latitude and longitude."""
-
-    response = requests.get('https://ipinfo.io/loc')
-
-    if response.status_code != 200:
-        raise ConnectionError('Error while geolocating: non-200 HTTP status code')
-
-    [lat, lon] = response.text.split(',')
-
-    return (float(lat), float(lon))
-
-
-def distance(first: Position, second: Position) -> float:
-    """Calculates the distance between two points in kilometers."""
-
-    return geodesic(first, second).kilometers
+Position = tuple[float, float]

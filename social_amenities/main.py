@@ -21,6 +21,7 @@ import sys
 
 from social_amenities.location import get_user_location, distance
 from social_amenities.overpass_api import overpass_query, extract_api_data, Amenity
+from social_amenities.types import Position
 
 
 def main() -> None:
@@ -64,7 +65,7 @@ out;
         print_amenity((lat, lon), amenity)
 
 
-def print_amenity(location: tuple[float, float], amenity: Amenity) -> None:
+def print_amenity(location: Position, amenity: Amenity) -> None:
     print('-' * 20)
     print(amenity.name, f'({distance(location, amenity.coords):.2f} km stąd)')
     print('-' * 20)

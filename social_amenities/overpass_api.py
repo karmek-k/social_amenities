@@ -20,12 +20,14 @@ from dataclasses import dataclass
 
 import requests
 
+from social_amenities.types import Position
+
 
 ENDPOINT_URL = 'https://overpass-api.de/api/interpreter'
 
 @dataclass
 class Amenity:
-    coords: tuple[float, float]
+    coords: Position
     name: str
     email: str | None
     phone: str | None
